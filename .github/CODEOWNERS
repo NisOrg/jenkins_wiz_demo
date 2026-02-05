@@ -1,1 +1,3 @@
-
+# Security / owner team controls the Wiz config
+.wiz @org/security-team
+.github/workflows/* @org/security-team
