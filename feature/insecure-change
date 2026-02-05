@@ -1,0 +1,9 @@
+# WARNING: This is problematic code for testing purposes only.
+import os
+
+# Hardcoded AWS Credentials (Wiz will detect this as a high-severity secret)
+AWS_ACCESS_KEY_ID = "AKIAEXAMPLE126tty4567jk9"
+AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+
+def connect_to_db():
+    print("Connecting to AWS with hardcoded keys...")
