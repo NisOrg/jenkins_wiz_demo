@@ -1,3 +1,4 @@
-pytest
-urllib3==1.22
-requirements.txt
+lxml==4.6.0
+urllib3==1.26.4
+requests==2.20.0
+django==2.2.10
