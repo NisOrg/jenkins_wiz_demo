@@ -1,0 +1,10 @@
+{
+  "name": "vulnerable-sca-app",
+  "version": "1.0.0",
+  "description": "Demo of SCA flagged dependencies",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.19.2",
+    "lodash": "4.17.11"
+  }
+}
