@@ -10,7 +10,7 @@ jobs:
       POLICY: "Default vulnerabilities policy"
       
       # TODO: Replace 'YOUR_GCP_PROJECT_ID' with your actual GCP Project ID string
-      TAG: "europe-west1-docker.pkg.dev/YOUR_GCP_PROJECT_ID/cloud-run-source-deploy/wiz-test-image:latest"
+      TAG: "europe-west1-docker.pkg.dev/coherent-bliss-474219-s4/cloud-run-source-deploy/wiz-test-image:latest"
 
     defaults:
       run:
