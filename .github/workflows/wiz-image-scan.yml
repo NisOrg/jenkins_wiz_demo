@@ -1,0 +1,39 @@
+name: "wiz-cli"
+on: [pull_request]
+
+jobs:
+  wiz-cli-image-scan:
+    name: "Wiz-cli Image Scan"
+    runs-on: ubuntu-latest
+    env:
+      SCAN_PATH: "."                   # Path to the directory containing your Dockerfile
+      TAG: "my-app:latest"             # The tag to assign to your Docker image
+      POLICY: "Default vulnerabilities policy" # The Wiz policy to check against
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      # 1. Check out the source code
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # 2. Build the Docker image locally on the runner
+      - name: Build the Docker image
+        run: cd $SCAN_PATH && docker build . --tag $TAG
+
+      # 3. Download the latest Wiz CLI binary for Linux
+      - name: Download Wiz CLI
+        run: curl -o wizcli https://downloads.wiz.io/v1/wizcli/latest/wizcli-linux-amd64 && chmod +x wizcli
+
+      # 4. Authenticate and run the container scan
+      - name: Run wiz-cli docker image scan
+        env:
+          WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
+          WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
+        run: ./wizcli scan container-image $TAG --policies "$POLICY"
+
+      # 5. Tag the image to enrich the Wiz Security Graph
+      - name: Fetch digest of Docker image for Graph enrichment
+        run: ./wizcli tag $TAG
