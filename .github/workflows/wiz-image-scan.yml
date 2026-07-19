@@ -6,9 +6,11 @@ jobs:
     name: "Wiz-cli Image Scan"
     runs-on: ubuntu-latest
     env:
-      SCAN_PATH: "."                   # Path to the directory containing your Dockerfile
-      TAG: "my-app:latest"             # The tag to assign to your Docker image
-      POLICY: "Default vulnerabilities policy" # The Wiz policy to check against
+      SCAN_PATH: "." 
+      POLICY: "Nissim - Block build Scan with vulerability"
+      
+      # TODO: Replace 'YOUR_GCP_PROJECT_ID' with your actual GCP Project ID string
+      TAG: "europe-west1-docker.pkg.dev/coherent-bliss-474219-s4/cloud-run-source-deploy/wiz-test-image:latest"
 
     defaults:
       run:
@@ -19,21 +21,33 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      # 2. Build the Docker image locally on the runner
+      # 2. Build the Docker image using the Google Registry tag convention
       - name: Build the Docker image
         run: cd $SCAN_PATH && docker build . --tag $TAG
 
-      # 3. Download the latest Wiz CLI binary for Linux
+      # 3. Download the latest Wiz CLI binary
       - name: Download Wiz CLI
         run: curl -o wizcli https://downloads.wiz.io/v1/wizcli/latest/wizcli-linux-amd64 && chmod +x wizcli
 
-      # 4. Authenticate and run the container scan
+      # 4. Authenticate and run the container scan (Shift-Left Guardrail)
       - name: Run wiz-cli docker image scan
         env:
           WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
           WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
         run: ./wizcli scan container-image $TAG --policies "$POLICY"
 
-      # 5. Tag the image to enrich the Wiz Security Graph
+      # 5. Authenticate to Google Artifact Registry
+      - name: Login to Artifact Registry
+        uses: docker/login-action@v3
+        with:
+          registry: europe-west1-docker.pkg.dev
+          username: _json_key
+          password: ${{ secrets.GCP_SA_KEY }}
+
+      # 6. Push the image to GCP (Only runs if the Wiz Scan passes)
+      - name: Push Image to Google Artifact Registry
+        run: docker push $TAG
+
+      # 7. Fetch digest of Docker image for Graph enrichment (Will now succeed!)
       - name: Fetch digest of Docker image for Graph enrichment
         run: ./wizcli tag $TAG
