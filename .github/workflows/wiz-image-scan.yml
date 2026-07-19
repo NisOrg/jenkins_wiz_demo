@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SCAN_PATH: "." 
-      POLICY: "Nissim - Block VCS Scan with vulerability"
+      POLICY: "Nissim - Block build Scan with vulerability"
       
       # TODO: Replace 'YOUR_GCP_PROJECT_ID' with your actual GCP Project ID string
       TAG: "europe-west1-docker.pkg.dev/coherent-bliss-474219-s4/cloud-run-source-deploy/wiz-test-image:latest"
